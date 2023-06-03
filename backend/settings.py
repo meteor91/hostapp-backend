@@ -30,14 +30,18 @@ CORS_ORIGIN_ALLOW_ALL = True
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-a67b!t$j$ri$ae^hfcjv1g%$vy!)v65&m%=qz!+z(v1dde56ks'
+# SECRET_KEY = 'django-insecure-a67b!t$j$ri$ae^hfcjv1g%$vy!)v65&m%=qz!+z(v1dde56ks'
+SECRET_KEY = os.environ.get("SECRET_KEY", default="django-insecure-a67b!t$j$ri$ae^hfcjv1g%$vy!)v65&m%=qz!+z(v1dde56ks")
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+# DEBUG = int(os.environ.get("DEBUG", default=0))
 
+
+# ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", default="localhost 127.0.0.1").split(" ")
 ALLOWED_HOSTS = ['*']
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -96,9 +100,13 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
+        "NAME": os.environ.get("SQL_DATABASE", BASE_DIR / "db.sqlite3"),
+        "USER": os.environ.get("SQL_USER", "user"),
+        "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
+        "HOST": os.environ.get("SQL_HOST", "localhost"),
+        "PORT": os.environ.get("SQL_PORT", "5432"),
     }
 }
 
@@ -168,27 +176,27 @@ REST_KNOX = {
     'EXPIRY_DATETIME_FORMAT': api_settings.DATETIME_FORMAT,
 }
 
-
-if os.environ.get('DJANGO_CONFIGURATION', '') == 'Prod':
-    DEBUG = False
-    ALLOWED_HOSTS = ['http://kkgenkai.space/', 'kkgenkai.space', 'www.kkgenkai.space']
-    CORS_ORIGIN_ALLOW_ALL = False
-
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'showcase',
-            'USER': 'postgres',
-            'PASSWORD': 'postgres',
-            'HOST': 'localhost',
-            'PORT': 5432,
-        },
-    }
-
-if os.environ.get('DJANGO_CONFIGURATION', '') == 'Cypress':
-    DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'cypress.sqlite3',
-    }
-}
+#
+# if os.environ.get('DJANGO_CONFIGURATION', '') == 'Prod':
+#     DEBUG = False
+#     ALLOWED_HOSTS = ['http://kkgenkai.space/', 'kkgenkai.space', 'www.kkgenkai.space']
+#     CORS_ORIGIN_ALLOW_ALL = False
+#
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#             'NAME': 'showcase',
+#             'USER': 'postgres',
+#             'PASSWORD': 'postgres',
+#             'HOST': 'localhost',
+#             'PORT': 5432,
+#         },
+#     }
+#
+# if os.environ.get('DJANGO_CONFIGURATION', '') == 'Cypress':
+#     DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'cypress.sqlite3',
+#     }
+# }
