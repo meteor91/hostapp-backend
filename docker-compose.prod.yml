@@ -6,6 +6,8 @@ services:
       context: ./
       dockerfile: Dockerfile.prod
     command: gunicorn backend.wsgi --bind 0.0.0.0:8000
+    volumes:
+      - static_volume:/home/app/web/staticfiles
     ports:
       - 8080:8000
     expose:
@@ -26,6 +28,9 @@ services:
       - 80:80
     depends_on:
       - web
+    volumes:
+      - static_volume:/home/app/web/staticfiles
 
 volumes:
   postgres_data:
+  static_volume:
