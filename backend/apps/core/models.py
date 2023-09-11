@@ -2,7 +2,7 @@ from django.db import models
 from django_softdelete.models import SoftDeleteModel
 
 
-class BasicsModelMixin(SoftDeleteModel):
+class BasicModelMixin(SoftDeleteModel):
     created_at = models.DateTimeField('Дата создания', auto_now_add=True)
     updated_at = models.DateTimeField('Дата последнего изменения', auto_now=True)
     created_by = models.ForeignKey('users.User', on_delete=models.RESTRICT)

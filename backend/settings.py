@@ -25,7 +25,7 @@ AUTH_USER_MODEL = 'users.User'
 
 #TODO Исправить для production сборки
 CORS_ORIGIN_ALLOW_ALL = True
-
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000', 'http://127.0.0.1:8000']
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_filters',
 
     'rest_framework',
     'corsheaders',
@@ -58,6 +59,7 @@ INSTALLED_APPS = [
     
     'core.apps.CoreConfig',
     'users.apps.UsersConfig',
+    'orders.apps.OrdersConfig',
     # 'themes.apps.ThemesConfig',
 ]
 
@@ -65,7 +67,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -73,6 +75,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     #TODO: настроить для продакшна
     'middlewares.ResponseDelayMiddleware',
+    'djangorestframework_camel_case.middleware.CamelCaseMiddleWare',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -162,8 +165,21 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
-    'DEFAULT_PAGINATION_CLASS': 'core.paginations.LimitOffsetPaginationExtended',
+    # 'DEFAULT_PAGINATION_CLASS': 'core.paginations.LimitOffsetPaginationExtended',
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_PAGINATION_CLASS': 'core.paginations.StandardPageNumberPagination',
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 5,
     'DEFAULT_AUTHENTICATION_CLASSES': ('users.auth.TokenAuthenticationViaCookie',),
+    'DEFAULT_RENDERER_CLASSES': (
+        'djangorestframework_camel_case.render.CamelCaseJSONRenderer',
+        'djangorestframework_camel_case.render.CamelCaseBrowsableAPIRenderer',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'djangorestframework_camel_case.parser.CamelCaseFormParser',
+        'djangorestframework_camel_case.parser.CamelCaseMultiPartParser',
+        'djangorestframework_camel_case.parser.CamelCaseJSONParser',
+    ),
 }
 
 REST_KNOX = {
@@ -176,23 +192,23 @@ REST_KNOX = {
     'EXPIRY_DATETIME_FORMAT': api_settings.DATETIME_FORMAT,
 }
 
-#
-# if os.environ.get('DJANGO_CONFIGURATION', '') == 'Prod':
-#     DEBUG = False
-#     ALLOWED_HOSTS = ['http://kkgenkai.space/', 'kkgenkai.space', 'www.kkgenkai.space']
-#     CORS_ORIGIN_ALLOW_ALL = False
-#
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#             'NAME': 'showcase',
-#             'USER': 'postgres',
-#             'PASSWORD': 'postgres',
-#             'HOST': 'localhost',
-#             'PORT': 5432,
-#         },
-#     }
-#
+
+if os.environ.get('DJANGO_CONFIGURATION', '') == 'Prod':
+    DEBUG = False
+    ALLOWED_HOSTS = ['http://kkgenkai.space/', 'kkgenkai.space', 'www.kkgenkai.space']
+    CORS_ORIGIN_ALLOW_ALL = False
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'showcase',
+            'USER': 'postgres',
+            'PASSWORD': 'postgres',
+            'HOST': 'localhost',
+            'PORT': 5432,
+        },
+    }
+
 # if os.environ.get('DJANGO_CONFIGURATION', '') == 'Cypress':
 #     DATABASES = {
 #     'default': {
